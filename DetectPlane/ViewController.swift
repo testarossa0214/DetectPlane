@@ -13,8 +13,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
+    private let label: UILabel = UILabel()              //検知したplaneに対してラベルをつけていく。ラベルの中だけで使う変数を定義
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.sceneView = ARSCNView(frame: self.view.frame)  //③subViewを追加しデバッグオプションを追加する
+        
+        self
+        
+        self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints,ARSCNDebugOptions.showWorldOrigin]  //平面の点を追加(feature~、特徴点、きらきらするやつ)、座標系を追加(world~)
+        self.view.addSubview(self.sceneView)           //④sceneViewをメインに追加
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -22,8 +31,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        // Create a new scene　②空の引数にする
+        let scene = SCNScene()
         
         // Set the scene to the view
         sceneView.scene = scene
@@ -34,6 +43,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
+        
+        configuration.planeDetection = .horizontal //①水平平面を検知。垂直はまだ。水平を認識する機能を有効化
 
         // Run the view's session
         sceneView.session.run(configuration)
