@@ -20,7 +20,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         self.sceneView = ARSCNView(frame: self.view.frame)  //③subViewを追加しデバッグオプションを追加する
         
-        self
+        self.label.frame = CGRect(x: 0, y: 0, width: self.sceneView.frame.size.width, height: 50)   //ラベルの表示枠をrectanguler(四角)で画面に表示する記述
+        self.label.center = self.sceneView.center           //ラベルの表示位置をセンターに
+        self.label.textAlignment = .center                  //テキストの表示位置をセンターに
+        self.label.textColor = UIColor.red                  //テキストカラー
+        self.label.font = UIFont.preferredFont(forTextStyle: .headline) //フォントを(見出し)に
+        self.label.alpha = 0                                //透明値、0で透明
+        
+        self.sceneView.addSubview(self.label)
+        
         
         self.sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints,ARSCNDebugOptions.showWorldOrigin]  //平面の点を追加(feature~、特徴点、きらきらするやつ)、座標系を追加(world~)
         self.view.addSubview(self.sceneView)           //④sceneViewをメインに追加
@@ -58,6 +66,18 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 
     // MARK: - ARSCNViewDelegate
+    // 平面を検知したときにARAnchorに格納する
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        DispatchQueue.main.async {              //平面を感知したとき　非同期
+            self.label.text = "Plane Detected!" //表示させる文字
+            
+            UIView.animate(withDuration: 3.0, animations: {     //表示時間を設定、3秒のアニメーション
+                self.label.alpha = 1.0          //
+            }) {(completion: Bool) in          //3秒経っていたら
+            self.label.alpha = 0.0              //アルファ値を戻す
+            }
+        }
+    }
     
 /*
     // Override to create and configure nodes for anchors added to the view's session.
